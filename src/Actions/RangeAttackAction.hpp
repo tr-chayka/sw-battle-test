@@ -21,15 +21,6 @@ namespace Sim
             if (pTarget)
             {
                 pTarget->GetDamage(pActor->GetAgility());
-            
-                // debug print
-                std::cout
-                    << "UNIT [" << pActor->GetId()
-                    << "] damaged UNIT [" << pTarget->GetId()
-                    << "] from range and deal [" << pActor->GetAgility() << "] damage"
-                    << std::endl;
-
-                // debug print
             }
 
             return pTarget != nullptr;

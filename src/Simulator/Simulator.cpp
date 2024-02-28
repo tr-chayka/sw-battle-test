@@ -4,8 +4,6 @@ namespace Sim
 {
 	bool Simulator::Tick(uint32_t current_tick)
 	{
-		std::cout << "TICK [" << current_tick << "]" << std::endl;
-
 		if (commandList.empty() && pBattleField->AllDied())
 			return false;
 

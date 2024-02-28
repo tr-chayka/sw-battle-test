@@ -12,8 +12,6 @@ namespace Sim
 			uint32_t tick = 0;
 			while (Tick(tick))
 				++tick;
-
-			std::cout << "Simulation Completed" << std::endl;
 		}
 
 		void AddCommand(std::unique_ptr<BaseCommand>&& command)

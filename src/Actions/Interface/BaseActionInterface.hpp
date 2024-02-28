@@ -22,5 +22,6 @@ namespace Sim
         virtual uint32_t GetId() const = 0;
         virtual uint32_t GetHp() const = 0;
         virtual void GetDamage(uint32_t damage) = 0;
+        virtual ~ICanBaseAction() = default;
     };
 }

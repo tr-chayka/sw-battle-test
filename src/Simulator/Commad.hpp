@@ -18,6 +18,7 @@ namespace Sim
 	{
 	public:
 		virtual bool Execute(std::unique_ptr<BattleField>& pBattleField) = 0; // return true if completed
+		virtual ~BaseCommand() = default;
 	protected:
 		CommandType CommandType; // not needed at all ?
 	};
@@ -30,7 +31,6 @@ namespace Sim
 
 		virtual bool Execute(std::unique_ptr<BattleField>& pBattleField)
 		{
-			std::cout << "MAP_CREATED with WIDTH = " << width << " and HEIGHT = " << height << std::endl;
 			pBattleField.reset(new BattleField(width, height));
 			return true;
 		}
@@ -53,15 +53,6 @@ namespace Sim
 
 		virtual bool Execute(std::unique_ptr<BattleField>& pBattleField)
 		{
-			std::cout
-				<< "WARRIOR_SPAWNED "
-				<< "Id = " << unitId
-				<< " X = " << unitX
-				<< " Y = " << unitY
-				<< " Hp = " << unitHp
-				<< " Strength = " << unitStrength
-				<< std::endl;
-
 			pBattleField->SpawnUnit<WarriorUnit>(unitId, unitX, unitY, unitHp, unitStrength);
 			return true;
 		}

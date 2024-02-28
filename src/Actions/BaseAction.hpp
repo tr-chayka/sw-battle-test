@@ -11,6 +11,7 @@ namespace Sim
     {
     public:
         virtual bool Execute(IBattleField* pBattleField = nullptr) = 0; // return true if succeeded
+        virtual ~BaseAction() = default;
     };
 
     using PBaseAction = std::shared_ptr<BaseAction>;

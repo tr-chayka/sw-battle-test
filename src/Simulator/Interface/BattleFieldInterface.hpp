@@ -12,5 +12,7 @@ namespace Sim
 
         virtual ICanBaseAction* GetItemByCoords(uint32_t x, uint32_t y) = 0;
         virtual ICanBaseAction* GetItemById(uint32_t id) = 0;
+
+        virtual ~IBattleField() = default;
     };
 }

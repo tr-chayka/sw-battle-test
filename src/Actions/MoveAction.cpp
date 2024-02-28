@@ -38,9 +38,6 @@ namespace Sim
         {
             pActor->SetX(x);
             pActor->SetY(y);
-
-            std::cout
-                << "UNIT [" << pActor->GetId() << "] moved to point [" << x << ", " << y << "]" << std::endl;
         }
 
         return result;

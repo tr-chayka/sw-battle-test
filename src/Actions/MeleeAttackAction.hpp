@@ -21,15 +21,6 @@ namespace Sim
             if (pTarget)
             {
                 pTarget->GetDamage(pActor->GetDamageStrength());
-                
-                // debug print
-                std::cout
-                    << "UNIT [" << pActor->GetId()
-                    << "] damaged UNIT [" << pTarget->GetId()
-                    << "] in melee and deal [" << pActor->GetDamageStrength() << "] damage"
-                    << std::endl;
-
-                // debug print
             }  
 
             return pTarget != nullptr;
