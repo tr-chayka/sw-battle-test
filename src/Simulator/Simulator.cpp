@@ -1,13 +1,13 @@
 #include <Simulator/Simulator.hpp>
 #include <IO/System/EventLog.hpp>
 
-namespace Sim
+namespace sw::sim
 {
-	bool Simulator::Tick(uint32_t current_tick)
+	bool Simulator::tick(uint32_t current_tick)
 	{
-		sw::EventLog::getLogger().setTick(current_tick);
+		EventLog::getLogger().setTick(current_tick);
 
-		if (commandList.empty() && pBattleField->AllDied())
+		if (commandList.empty() && pBattleField->allDied())
 			return false;
 
 		bool result = false;
@@ -15,13 +15,13 @@ namespace Sim
 		{
 			result = true;
 			auto& current_command = commandList.front();
-			if (current_command->Execute(pBattleField)) {
+			if (current_command->execute(pBattleField)) {
 				commandList.pop_front();
 			}
 		}
 
-		result = pBattleField->TryDoSomethig() || result;
-		pBattleField->Clean();
+		result = pBattleField->tryDoSomethig() || result;
+		pBattleField->clean();
 
 		return result;
 	}

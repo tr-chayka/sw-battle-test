@@ -2,11 +2,11 @@
 
 #include <Actions/Interface/BaseActionInterface.hpp>
 
-namespace Sim
+namespace sw::sim
 {
     class ICanMeleeAttack : virtual public ICanBaseAction
     {
     public:
-        virtual uint32_t GetDamageStrength() const = 0;
+        virtual uint32_t getDamageStrength() const = 0;
     };
 }

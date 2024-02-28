@@ -2,7 +2,7 @@
 
 #include <Simulator/Commands/BaseCommad.hpp>
 
-namespace Sim
+namespace sw::sim
 {
     class WaitCommand : public BaseCommand
 	{
@@ -10,12 +10,12 @@ namespace Sim
 		WaitCommand(uint32_t time) : waitTime(time)
 		{}
 
-		virtual bool Execute(std::unique_ptr<BattleField>& pBattleField)
+		virtual bool execute(std::unique_ptr<BattleField>& pBattleField)
 		{
 			if (waitTime == 0)
 				return true;
 			else
-				--waitTime;
+				waitTime--;
 			
 			return false;
 		}

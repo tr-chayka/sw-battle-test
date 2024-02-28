@@ -4,7 +4,7 @@
 #include <IO/EventLogs/MapCreated.hpp>
 #include <IO/System/EventLog.hpp>
 
-namespace Sim
+namespace sw::sim
 {
     class CreateBattleFieldCommand : public BaseCommand
 	{
@@ -12,9 +12,13 @@ namespace Sim
 		CreateBattleFieldCommand(uint32_t w, uint32_t h) : width(w), height(h)
 		{}
 
-		virtual bool Execute(std::unique_ptr<BattleField>& pBattleField)
+		virtual bool execute(std::unique_ptr<BattleField>& pBattleField)
 		{
-            sw::EventLog::getLogger().log(sw::io::MapCreated{sw::EventLog::getLogger().getTick(), width, height});
+            EventLog::getLogger().log(io::MapCreated{
+				sw::EventLog::getLogger().tick(), 
+				width, height
+			});
+			
 			pBattleField.reset(new BattleField(width, height));
 			return true;
 		}

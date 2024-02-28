@@ -2,12 +2,11 @@
 
 #include <Actions/Interface/BaseActionInterface.hpp>
 
-namespace Sim
+namespace sw::sim
 {
     class ICanMove : virtual public ICanBaseAction
     {
     public:        
-        virtual void SetX(uint32_t) = 0;
-        virtual void SetY(uint32_t) = 0;
+        virtual void setPosition(const Point& position) = 0;
     };
 }

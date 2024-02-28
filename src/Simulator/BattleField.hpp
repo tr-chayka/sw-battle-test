@@ -7,7 +7,7 @@
 #include <list>
 #include <type_traits>
 
-namespace Sim
+namespace sw::sim
 {
     class BattleField : public IBattleField
     {
@@ -17,78 +17,78 @@ namespace Sim
             battleFieldHeight(h)
         {}
 
-        virtual bool IsValidCoords(uint32_t x, uint32_t y) const
+        virtual bool isValidCoords(const Point& position) const
         {
-            return x < battleFieldWidth && y < battleFieldHeight;
+            return position.x < battleFieldWidth && position.y < battleFieldHeight;
         }
 
-        virtual bool IsFree(uint32_t x, uint32_t y) const
+        virtual bool isFree(const Point& position) const
         {
-            return IsValidCoords(x, y) && GetItemByCoords(x, y) == nullptr;
+            return isValidCoords(position) && getItemByCoords(position) == nullptr;
         }
 
-        const ICanBaseAction* GetItemByCoords(uint32_t x, uint32_t y) const
+        const ICanBaseAction* getItemByCoords(const Point& position) const
         {
             for (auto pUnit : unitList)
-                if (pUnit->GetX() == x && pUnit->GetY() == y)
+                if (pUnit->getPosition() == position)
                     return pUnit.get();
 
             return nullptr;
         }
 
-        virtual ICanBaseAction* GetItemByCoords(uint32_t x, uint32_t y)
+        virtual ICanBaseAction* getItemByCoords(const Point& position)
         {
             for (auto pUnit : unitList)
-                if (pUnit->GetX() == x && pUnit->GetY() == y)
+                if (pUnit->getPosition() == position)
                     return pUnit.get();
             
             return nullptr;
         }
 
-        virtual ICanBaseAction* GetItemById(uint32_t id)
+        virtual ICanBaseAction* getItemById(uint32_t id)
         {
-            return GetUnit(id).get();
+            return getUnit(id).get();
         }
 
         template <typename T, typename ... args_t>
-        void SpawnUnit(args_t ... args)
+        void spawnUnit(args_t ... args)
         {
             if (std::is_constructible<T, args_t ...>() && std::is_base_of<BaseUnit, T>())
                 unitList.emplace_back(new T(args ...));
         }
 
-        PBaseUnit GetUnit(uint32_t id)
+        PBaseUnit getUnit(uint32_t id)
         {
             for (auto pUnit : unitList)
-                if (pUnit->GetId() == id)
+                if (pUnit->getId() == id)
                     return pUnit;
 
             return nullptr;
         }
 
-        bool AllDied() const
+        bool allDied() const // :(
         {
             return unitList.empty();
         }
 
-        bool TryDoSomethig()
+        bool tryDoSomethig()
         {
             bool result = false;
 
             for (auto pUnit : unitList)
-                result = pUnit->TryDoSomething(this) || result;
+                result = pUnit->tryDoSomething(this) || result;
 
             return result;
         }
 
-        void Clean()
+        void clean()
         {
             auto it = std::remove_if(
                 unitList.begin(),
                 unitList.end(),
                 [](PBaseUnit& pUnit)
                 {
-                    return pUnit == nullptr || pUnit->IsKilled();
+                    return pUnit == nullptr || pUnit->isKilled();
                 }
             );
 

@@ -38,13 +38,14 @@ int main(int argc, char** argv)
 		throw std::runtime_error("Error: File not found - " + std::string(argv[1]));
 	}
 
-	Sim::Simulator simulator;
-
+	sim::Simulator simulator;
 	io::CommandParser parser;
+
+	// TODO remove IO/Commands structures and generate sim::Commands's directly in parser ?
 	parser.add<io::CreateMap>(
 		[&simulator](auto command)
 		{
-			simulator.AddCommand(std::make_unique<Sim::CreateBattleFieldCommand>(
+			simulator.addCommand(std::make_unique<sim::CreateBattleFieldCommand>(
 				command.width, 
 				command.height
 			));
@@ -52,7 +53,7 @@ int main(int argc, char** argv)
 		).add<io::SpawnWarrior>(
 		[&simulator](auto command)
 		{
-			simulator.AddCommand(std::make_unique<Sim::SpawnWarriorCommand>(
+			simulator.addCommand(std::make_unique<sim::SpawnWarriorCommand>(
 				command.unitId,
 				command.x,
 				command.y,
@@ -63,7 +64,7 @@ int main(int argc, char** argv)
 		).add<io::SpawnArcher>(
 		[&simulator](auto command)
 		{
-			simulator.AddCommand(std::make_unique<Sim::SwawnArcherCommand>(
+			simulator.addCommand(std::make_unique<sim::SpawnArcherCommand>(
 				command.unitId,
 				command.x,
 				command.y,
@@ -76,7 +77,7 @@ int main(int argc, char** argv)
 		).add<io::March>(
 		[&simulator](auto command)
 		{
-			simulator.AddCommand(std::make_unique<Sim::MarchCommand>(
+			simulator.addCommand(std::make_unique<sim::MarchCommand>(
 				command.unitId,
 				command.targetX,
 				command.targetY
@@ -84,7 +85,7 @@ int main(int argc, char** argv)
 		}).add<io::Wait>(
 		[&simulator](auto command)
 		{
-			simulator.AddCommand(std::make_unique<Sim::WaitCommand>(
+			simulator.addCommand(std::make_unique<sim::WaitCommand>(
 				command.ticks
 			));
 		});
@@ -100,6 +101,6 @@ int main(int argc, char** argv)
 	eventLog.listen<io::UnitAttacked>([](auto& event){ printDebug(std::cout, event); });
 	eventLog.listen<io::UnitDied>([](auto& event){ printDebug(std::cout, event); });
 
-	simulator.Run();
+	simulator.run();
 	return 0;
 }

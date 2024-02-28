@@ -2,25 +2,25 @@
 
 #include <Simulator/Commands/BaseCommad.hpp>
 
-namespace Sim
+namespace sw::sim
 {
 	class Simulator
 	{
 	public:
-		void Run()
+		void run()
 		{
-			uint32_t tick = 0;
-			while (Tick(tick))
-				++tick;
+			uint32_t current_tick = 0;
+			while (tick(current_tick))
+				current_tick++;
 		}
 
-		void AddCommand(std::unique_ptr<BaseCommand>&& command)
+		void addCommand(std::unique_ptr<BaseCommand>&& command)
 		{
 			commandList.emplace_back(std::move(command));
 		}
 	
 	private:
-		bool Tick(uint32_t current_tick);
+		bool tick(uint32_t current_tick);
 
 	private:
 		std::unique_ptr<BattleField> pBattleField{ nullptr };

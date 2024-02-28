@@ -5,7 +5,7 @@
 #include <IO/EventLogs/UnitSpawned.hpp>
 #include <IO/System/EventLog.hpp>
 
-namespace Sim
+namespace sw::sim
 {
     class SpawnWarriorCommand : public BaseCommand
 	{
@@ -18,10 +18,23 @@ namespace Sim
 			unitStrength(strength)
 		{}
 
-		virtual bool Execute(std::unique_ptr<BattleField>& pBattleField)
+		virtual bool execute(std::unique_ptr<BattleField>& pBattleField)
 		{
-            sw::EventLog::getLogger().log(sw::io::UnitSpawned{sw::EventLog::getLogger().getTick(), unitId, "Warrior", unitX, unitY});
-			pBattleField->SpawnUnit<WarriorUnit>(unitId, unitX, unitY, unitHp, unitStrength);
+            EventLog::getLogger().log(io::UnitSpawned{
+				EventLog::getLogger().tick(), 
+				unitId, 
+				"Warrior", 
+				unitX, 
+				unitY
+			});
+
+			pBattleField->spawnUnit<WarriorUnit>(
+				unitId, 
+				Point{ (int32_t)unitX, (int32_t)unitY }, 
+				unitHp, 
+				unitStrength
+			);
+			
             return true;
 		}
 

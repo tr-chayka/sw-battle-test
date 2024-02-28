@@ -2,16 +2,16 @@
 
 #include <Actions/Interface/BaseActionInterface.hpp>
 
-namespace Sim
+namespace sw::sim
 {
     class IBattleField
     {
     public:
-        virtual bool IsFree(uint32_t x, uint32_t y) const = 0;
-        virtual bool IsValidCoords(uint32_t x, uint32_t y) const = 0;
+        virtual bool isFree(const Point& postion) const = 0;
+        virtual bool isValidCoords(const Point& position) const = 0;
 
-        virtual ICanBaseAction* GetItemByCoords(uint32_t x, uint32_t y) = 0;
-        virtual ICanBaseAction* GetItemById(uint32_t id) = 0;
+        virtual ICanBaseAction* getItemByCoords(const Point& position) = 0;
+        virtual ICanBaseAction* getItemById(uint32_t id) = 0;
 
         virtual ~IBattleField() = default;
     };

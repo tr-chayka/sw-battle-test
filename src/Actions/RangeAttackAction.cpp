@@ -1,59 +1,40 @@
 #include <Actions/RangeAttackAction.hpp>
 
-namespace Sim
+namespace sw::sim
 {
-    static int32_t length2(int32_t x, int32_t y)
-    {
-        return x * x + y * y;
-    }
-
-    static int32_t distance2(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
-    {
-        return length2(x2 - x1, y2 - y1);
-    }
-
-    ICanBaseAction* RangeAttackAction::SelectTarget(IBattleField* pBattleField)
+    ICanBaseAction* RangeAttackAction::selectTarget(IBattleField* pBattleField)
     {
         ICanBaseAction* pTarget = nullptr;
         
-        int32_t range = pActor->GetAttackRange();
-        int32_t current_x = pActor->GetX();
-        int32_t current_y = pActor->GetY();
+        auto range = pActor->getAttackRange();
+        auto currentPosition = pActor->getPosition();
 
-        for (int32_t x = current_x - range; x <= current_x + range; ++x)
-            for (int32_t y = current_y - range; y <= current_y + range; ++y)
+        for (int32_t x = currentPosition.x - range; x <= currentPosition.x + range; x++)
+            for (int32_t y = currentPosition.y - range; y <= currentPosition.y + range; y++)
             {
-                int32_t l2 = length2(x - current_x, y - current_y);
-                if (l2 < 4 || l2 > range * range)
+                auto possiblePosition = Point{ x, y };
+                auto distance2 = possiblePosition.distance2(currentPosition);
+                if (distance2 < 4 || distance2 > range * range)
                     continue;
 
-                auto pPossibleTarget = pBattleField->GetItemByCoords(x, y);
+                auto pPossibleTarget = pBattleField->getItemByCoords(possiblePosition);
                 if (pPossibleTarget)
                 {
                     if (pTarget == nullptr)
-                    {
                         pTarget = pPossibleTarget;
-                    }
                     else
                     {
-                        int32_t target_distance2 = distance2(pTarget->GetX(), pTarget->GetY(), current_x, current_y);
-                        int32_t possible_distance2 = distance2(pPossibleTarget->GetX(), pPossibleTarget->GetY(), current_x, current_y);
-                        
-                        if (possible_distance2 < target_distance2)
-                        {
+                        auto targetPosition = pTarget->getPosition();
+                        if (currentPosition.distance2(possiblePosition) < currentPosition.distance2(targetPosition))
                             pTarget = pPossibleTarget;
-                        }
-                        else if (possible_distance2 == target_distance2)
-                        {
-                            if (pPossibleTarget->GetHp() <= pTarget->GetHp() ||
-                                pPossibleTarget->GetHp() == pTarget->GetHp() && pPossibleTarget->GetId() <= pPossibleTarget->GetId())
-                                pTarget = pPossibleTarget;
-
-                        }
+                        else if (pPossibleTarget->getHp() < pTarget->getHp() ||
+                            pPossibleTarget->getHp() == pTarget->getHp() &&
+                            pPossibleTarget->getId() < pTarget->getId())
+                            pTarget = pPossibleTarget;
                     }
                 }
             }
 
         return pTarget;
-    }
+   }
 }

@@ -10,69 +10,75 @@
 #include <iostream>
 #include <memory>
 
-namespace Sim
+namespace sw::sim
 {
     class BaseUnit : public ICanMove
     {    
     public:
-        BaseUnit(uint32_t id, uint32_t x, uint32_t y, uint32_t hp) :
-            Id(id),
-            X(x),
-            Y(y),
-            Hp(hp)
+        BaseUnit(uint32_t id, const Point& position, uint32_t hp) :
+            unitId(id),
+            unitPosition(position),
+            unitHp(hp)
         {
             actionPriorityList.emplace_front(ActionType::Move);
             actionMap.emplace(ActionType::Move, std::make_shared<MoveAction>(this));
         }
 
-        bool IsKilled() const {return Hp == 0;}
-        virtual void GetDamage(uint32_t damage, uint32_t from) 
+        bool isKilled() const {return unitHp == 0;}
+        virtual void getDamage(uint32_t damage, uint32_t from) 
         {
-            if (Hp > damage)
+            if (unitHp > damage)
             {
-                Hp -= damage;
-                sw::EventLog::getLogger().log(sw::io::UnitAttacked{sw::EventLog::getLogger().getTick(), Id, from, damage, Hp});
+                unitHp -= damage;
+                EventLog::getLogger().log(io::UnitAttacked{
+                    sw::EventLog::getLogger().tick(), 
+                    unitId, from, damage, unitHp
+                });
             }
             else
             {
-                sw::EventLog::getLogger().log(sw::io::UnitAttacked{sw::EventLog::getLogger().getTick(), Id, from, Hp, 0});
-                sw::EventLog::getLogger().log(sw::io::UnitDied{sw::EventLog::getLogger().getTick(), Id});
-                Hp = 0;
+                unitHp = 0;
+
+                EventLog::getLogger().log(io::UnitAttacked{
+                    sw::EventLog::getLogger().tick(),
+                    unitId, from, unitHp, 0
+                });
+
+                EventLog::getLogger().log(io::UnitDied{
+                    EventLog::getLogger().tick(), 
+                    unitId
+                });
             }
         }
 
-        virtual uint32_t GetX() const { return X; }
-        virtual uint32_t GetY() const { return Y; }
-        virtual void SetX(uint32_t x) { X = x; }
-        virtual void SetY(uint32_t y) { Y = y; }
+        virtual Point getPosition() const { return unitPosition; }
+        virtual void setPosition(const Point& position) { unitPosition = position; }
 
-        virtual uint32_t GetId() const { return Id; }
-        virtual uint32_t GetHp() const { return Hp; }
+        virtual uint32_t getId() const { return unitId; }
+        virtual uint32_t getHp() const { return unitHp; }
 
-        PBaseAction GetAction(ActionType action_type)
+        PBaseAction getAction(ActionType action_type)
         {
             auto actionIt = actionMap.find(action_type);
-
-            if (actionMap.end() != actionIt)
-                return actionIt->second;
-            else
+            if (actionMap.end() == actionIt)
                 return nullptr;
+
+            return actionIt->second;
         }
 
-        bool TryDoSomething(IBattleField* pBattleField)
+        bool tryDoSomething(IBattleField* pBattleField)
         {
             for (auto actionType : actionPriorityList)
-                if (GetAction(actionType)->Execute(pBattleField))
+                if (getAction(actionType)->execute(pBattleField))
                     return true;
 
             return false;
         }
         
     protected:
-        uint32_t Id;
-        uint32_t Hp;
-        uint32_t X;
-        uint32_t Y;
+        uint32_t unitId;
+        uint32_t unitHp;
+        Point unitPosition;
 
         std::list<ActionType> actionPriorityList;
         std::map<ActionType, PBaseAction> actionMap;

@@ -4,37 +4,45 @@
 #include <IO/EventLogs/MarchStarted.hpp>
 #include <IO/System/EventLog.hpp>
 
-namespace Sim
+namespace sw::sim
 {
     class MarchCommand : public BaseCommand
 	{
 	public:
 		MarchCommand(uint32_t id, uint32_t x, uint32_t y) :
 			unitId(id),
-			destinationX(x),
-			destinationY(y)
+			destX(x),
+			destY(y)
 		{}
 
-		virtual bool Execute(std::unique_ptr<BattleField>& pBattleField)
+		virtual bool execute(std::unique_ptr<BattleField>& pBattleField)
 		{
-			auto pUnit = pBattleField->GetUnit(unitId);
+			auto pUnit = pBattleField->getUnit(unitId);
 			if (pUnit == nullptr)
 				return true;
 
-			auto pAction = pUnit->GetAction(ActionType::Move);
+			auto pAction = pUnit->getAction(ActionType::Move);
 			if (pAction == nullptr)
 				return true;
 
 			// dynamic_cast ...
-			((MoveAction*)pAction.get())->SetDestination(destinationX, destinationY);
+			((MoveAction*)pAction.get())->setDestination(Point{ (int32_t)destX, (int32_t)destY });
 
-            sw::EventLog::getLogger().log(sw::io::MarchStarted{sw::EventLog::getLogger().getTick(), unitId, pUnit->GetX(), pUnit->GetY(), destinationX, destinationY});
+            EventLog::getLogger().log(io::MarchStarted{
+				EventLog::getLogger().tick(), 
+				unitId, 
+				(uint32_t)pUnit->getPosition().x,
+				(uint32_t)pUnit->getPosition().y,
+				destX,
+				destY
+			});
+
             return true;
 		}
 
 	private:
-		uint32_t destinationX;
-		uint32_t destinationY;
+		uint32_t destX;
+		uint32_t destY;
 		uint32_t unitId;
 	};
 }

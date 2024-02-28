@@ -2,12 +2,12 @@
 
 #include <Actions/Interface/BaseActionInterface.hpp>
 
-namespace Sim
+namespace sw::sim
 {
     class ICanRangeAttack : virtual public ICanBaseAction
     {
     public:
-        virtual uint32_t GetAttackRange() const = 0;
-        virtual uint32_t GetAgility() const = 0;
+        virtual uint32_t getAttackRange() const = 0;
+        virtual uint32_t getAgility() const = 0;
     };
 }

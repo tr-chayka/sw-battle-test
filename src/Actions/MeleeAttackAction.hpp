@@ -3,9 +3,7 @@
 #include <Actions/BaseAction.hpp>
 #include <Actions/Interface/MeleeAttackInterface.hpp>
 
-#include <iostream>
-
-namespace Sim
+namespace sw::sim
 {
     class MeleeAttackAction : public BaseAction
     {
@@ -14,20 +12,17 @@ namespace Sim
             pActor(actor)
         {}
         
-        virtual bool Execute(IBattleField* pBattleField)
+        virtual bool execute(IBattleField* pBattleField)
         {
-            auto pTarget = SelectTarget(pBattleField);
-
+            auto pTarget = selectTarget(pBattleField);
             if (pTarget)
-            {
-                pTarget->GetDamage(pActor->GetDamageStrength(), pActor->GetId());
-            }  
+                pTarget->getDamage(pActor->getDamageStrength(), pActor->getId());
 
             return pTarget != nullptr;
         }
 
     private:
-       ICanBaseAction* SelectTarget(IBattleField* pBattleField);
+       ICanBaseAction* selectTarget(IBattleField* pBattleField);
 
     private:
         ICanMeleeAttack* pActor {nullptr};

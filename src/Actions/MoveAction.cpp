@@ -6,57 +6,56 @@
 
 #include <iostream>
 
-namespace Sim
+namespace sw::sim
 {
-    static int32_t normalize(int32_t value)
-    {
-        return (value != 0) ? value / abs(value) : 0; 
-    }
-
-    bool MoveAction::Execute(IBattleField* pBattleField)
+    bool MoveAction::execute(IBattleField* pBattleField)
     {
         if (!hasDestination)
             return false;
 
-        int32_t current_x = (int32_t)pActor->GetX();
-        int32_t current_y = (int32_t)pActor->GetY();
-
-        if (current_x == destinationX && current_y == destinationY)
+        auto currentPosition = pActor->getPosition();
+        if (currentPosition == destinationPoint)
             return false;
 
-        int32_t dx = normalize(destinationX - current_x);
-        int32_t dy = normalize(destinationY - current_y);
+        auto shift = (destinationPoint - currentPosition).norm();
 
         bool result = 
-            TryMoveTo(pBattleField, current_x + dx, current_y + dy) ||
-            TryMoveTo(pBattleField, current_x + dx, current_y) ||
-            TryMoveTo(pBattleField, current_x, current_y + dy);
+            tryMoveTo(pBattleField, currentPosition + shift) ||
+            tryMoveTo(pBattleField, currentPosition + Point{ shift.x, 0 }) ||
+            tryMoveTo(pBattleField, currentPosition + Point{ 0, shift.y });
         
         if (result)
         {
-            sw::EventLog& logger = sw::EventLog::getLogger();
+            currentPosition = pActor->getPosition();
 
-            uint32_t x = pActor->GetX();
-            uint32_t y = pActor->GetY();
-
-            logger.log(sw::io::UnitMoved{logger.getTick(), pActor->GetId(), x, y});
-            if (x == destinationX && y == destinationY)
-                logger.log(sw::io::MarchEnded{logger.getTick(), pActor->GetId(), x, y});
+            EventLog& logger = EventLog::getLogger();
+            logger.log(io::UnitMoved{
+                logger.tick(), 
+                pActor->getId(), 
+                (uint32_t)currentPosition.x, 
+                (uint32_t)currentPosition.y
+            });
+            
+            if (currentPosition == destinationPoint)
+                logger.log(io::MarchEnded{
+                    logger.tick(), 
+                    pActor->getId(), 
+                    (uint32_t)currentPosition.x, 
+                    (uint32_t)currentPosition.y
+            });
         }
 
         return result;
     }
 
-    bool MoveAction::TryMoveTo(IBattleField* pBattleField, int32_t x, int32_t y)
+    bool MoveAction::tryMoveTo(IBattleField* pBattleField, const Point& position)
     {
-        bool result = pBattleField->IsFree(x, y);
-
-        if (result)
+        if (pBattleField->isFree(position))
         {
-            pActor->SetX(x);
-            pActor->SetY(y);
+            pActor->setPosition(position);
+            return true;
         }
 
-        return result;
+        return false;
     }
 }

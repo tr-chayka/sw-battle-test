@@ -18,7 +18,7 @@ namespace sw
 
 		static EventLog& getLogger();
 		void setTick(uint32_t tick) { currentTick = tick; }
-		uint32_t getTick() const { return currentTick; }
+		uint32_t tick() const { return currentTick; }
 
 		template <class TEvent>
 		void listen(std::function<void(TEvent&)> handler)

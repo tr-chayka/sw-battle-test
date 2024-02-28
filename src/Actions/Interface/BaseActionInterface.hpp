@@ -5,7 +5,9 @@
 #include <map>
 #include <string>
 
-namespace Sim
+#include <Utils/Point.hpp>
+
+namespace sw::sim
 {
     enum class ActionType
     {
@@ -17,11 +19,11 @@ namespace Sim
     class ICanBaseAction
     {
     public:
-        virtual uint32_t GetX() const = 0;
-        virtual uint32_t GetY() const = 0;
-        virtual uint32_t GetId() const = 0;
-        virtual uint32_t GetHp() const = 0;
-        virtual void GetDamage(uint32_t damage, uint32_t from) = 0;
+        virtual Point getPosition() const = 0;
+        virtual uint32_t getId() const = 0;
+        virtual uint32_t getHp() const = 0;
+        virtual void getDamage(uint32_t damage, uint32_t from) = 0;
+        
         virtual ~ICanBaseAction() = default;
     };
 }

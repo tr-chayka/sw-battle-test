@@ -5,12 +5,12 @@
 
 #include <memory>
 
-namespace Sim
+namespace sw::sim
 {
     class BaseAction
     {
     public:
-        virtual bool Execute(IBattleField* pBattleField = nullptr) = 0; // return true if succeeded
+        virtual bool execute(IBattleField* pBattleField = nullptr) = 0; // return true if succeeded
         virtual ~BaseAction() = default;
     };
 

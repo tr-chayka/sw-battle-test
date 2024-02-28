@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-namespace Sim
+namespace sw::sim
 {
     class RangeAttackAction : public BaseAction
     {
@@ -14,20 +14,17 @@ namespace Sim
             pActor(actor)
         {}
 
-        virtual bool Execute(IBattleField* pBattleField)
+        virtual bool execute(IBattleField* pBattleField)
         {
-            auto pTarget = SelectTarget(pBattleField);
-
+            auto pTarget = selectTarget(pBattleField);
             if (pTarget)
-            {
-                pTarget->GetDamage(pActor->GetAgility(), pActor->GetId());
-            }
+                pTarget->getDamage(pActor->getAgility(), pActor->getId());
 
             return pTarget != nullptr;
         }
 
     private:
-        ICanBaseAction* SelectTarget(IBattleField* pBattleField);
+        ICanBaseAction* selectTarget(IBattleField* pBattleField);
 
     private:
         ICanRangeAttack* pActor {nullptr};
