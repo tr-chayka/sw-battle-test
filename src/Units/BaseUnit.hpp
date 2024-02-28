@@ -2,6 +2,10 @@
 
 #include <Actions/MoveAction.hpp>
 
+#include <IO/EventLogs/UnitAttacked.hpp>
+#include <IO/EventLogs/UnitDied.hpp>
+#include <IO/System/EventLog.hpp>
+
 #include <cstdint>
 #include <iostream>
 #include <memory>
@@ -22,7 +26,20 @@ namespace Sim
         }
 
         bool IsKilled() const {return Hp == 0;}
-        virtual void GetDamage(uint32_t damage) {Hp = (Hp > damage) ? (Hp - damage) : 0;}
+        virtual void GetDamage(uint32_t damage, uint32_t from) 
+        {
+            if (Hp > damage)
+            {
+                Hp -= damage;
+                sw::EventLog::getLogger().log(sw::io::UnitAttacked{sw::EventLog::getLogger().getTick(), Id, from, damage, Hp});
+            }
+            else
+            {
+                sw::EventLog::getLogger().log(sw::io::UnitAttacked{sw::EventLog::getLogger().getTick(), Id, from, Hp, 0});
+                sw::EventLog::getLogger().log(sw::io::UnitDied{sw::EventLog::getLogger().getTick(), Id});
+                Hp = 0;
+            }
+        }
 
         virtual uint32_t GetX() const { return X; }
         virtual uint32_t GetY() const { return Y; }

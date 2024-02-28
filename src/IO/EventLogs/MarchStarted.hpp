@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdint>
 
 namespace sw::io
@@ -5,6 +6,7 @@ namespace sw::io
 	struct MarchStarted {
 		constexpr static const char* Name = "MARCH_STARTED";
 
+		uint32_t Tick {};
 		uint32_t unitId {};
 		uint32_t x {};
 		uint32_t y {};

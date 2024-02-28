@@ -9,8 +9,16 @@ namespace sw
 	class EventLog {
 	private:
 		std::unordered_map<std::type_index, std::function<void(void*)>> _handlers;
+		uint32_t currentTick;
+		EventLog() {}
 
 	public:
+		EventLog(const EventLog&) = delete;
+        void operator = (EventLog const&) = delete;
+
+		static EventLog& getLogger();
+		void setTick(uint32_t tick) { currentTick = tick; }
+		uint32_t getTick() const { return currentTick; }
 
 		template <class TEvent>
 		void listen(std::function<void(TEvent&)> handler)

@@ -17,6 +17,14 @@
 #include <IO/EventLogs/UnitAttacked.hpp>
 
 
+#include <Simulator/Commands/CreateBattleFieldCommand.hpp>
+#include <Simulator/Commands/SpawnWarriorCommand.hpp>
+#include <Simulator/Commands/SpawnArcherCommand.hpp>
+#include <Simulator/Commands/MarchCommand.hpp>
+#include <Simulator/Commands/WaitCommand.hpp>
+
+#include <Simulator/Simulator.hpp>
+
 int main(int argc, char** argv)
 {
 	using namespace sw;
@@ -30,37 +38,60 @@ int main(int argc, char** argv)
 		throw std::runtime_error("Error: File not found - " + std::string(argv[1]));
 	}
 
-	// Code for example...
+	Sim::Simulator simulator;
 
-	std::cout << "Commands:\n";
 	io::CommandParser parser;
 	parser.add<io::CreateMap>(
-		[](auto command)
+		[&simulator](auto command)
 		{
-			printDebug(std::cout, command);
-		}).add<io::SpawnWarrior>(
-		[](auto command)
+			simulator.AddCommand(std::make_unique<Sim::CreateBattleFieldCommand>(
+				command.width, 
+				command.height
+			));
+		}
+		).add<io::SpawnWarrior>(
+		[&simulator](auto command)
 		{
-			printDebug(std::cout, command);
-		}).add<io::SpawnArcher>(
-		[](auto command)
+			simulator.AddCommand(std::make_unique<Sim::SpawnWarriorCommand>(
+				command.unitId,
+				command.x,
+				command.y,
+				command.hp,
+				command.strength
+				));
+		}
+		).add<io::SpawnArcher>(
+		[&simulator](auto command)
 		{
-			printDebug(std::cout, command);
-		}).add<io::March>(
-		[](auto command)
+			simulator.AddCommand(std::make_unique<Sim::SwawnArcherCommand>(
+				command.unitId,
+				command.x,
+				command.y,
+				command.hp,
+				command.strength,
+				command.range,
+				command.agility
+			));
+		}
+		).add<io::March>(
+		[&simulator](auto command)
 		{
-			printDebug(std::cout, command);
+			simulator.AddCommand(std::make_unique<Sim::MarchCommand>(
+				command.unitId,
+				command.targetX,
+				command.targetY
+			));
 		}).add<io::Wait>(
-		[](auto command)
+		[&simulator](auto command)
 		{
-			printDebug(std::cout, command);
+			simulator.AddCommand(std::make_unique<Sim::WaitCommand>(
+				command.ticks
+			));
 		});
 
 	parser.parse(file);
 
-	std::cout << "\n\nEvents:\n";
-
-	EventLog eventLog;
+	EventLog& eventLog = EventLog::getLogger();
 	eventLog.listen<io::MapCreated>([](auto& event){ printDebug(std::cout, event); });
 	eventLog.listen<io::UnitSpawned>([](auto& event){ printDebug(std::cout, event); });
 	eventLog.listen<io::MarchStarted>([](auto& event){ printDebug(std::cout, event); });
@@ -69,14 +100,6 @@ int main(int argc, char** argv)
 	eventLog.listen<io::UnitAttacked>([](auto& event){ printDebug(std::cout, event); });
 	eventLog.listen<io::UnitDied>([](auto& event){ printDebug(std::cout, event); });
 
-	eventLog.log(io::MapCreated{ 10, 10 });
-	eventLog.log(io::UnitSpawned{ 1, "Archer", 5, 3 });
-	eventLog.log(io::UnitSpawned{ 2, "Warrior", 5, 3 });
-	eventLog.log(io::MarchStarted{ 1, 5, 3, 7, 9 });
-	eventLog.log(io::UnitMoved{ 1, 6, 4 });
-	eventLog.log(io::UnitAttacked{ 1, 2, 5, 0 });
-	eventLog.log(io::MarchEnded{ 1, 7, 9 });
-	eventLog.log(io::UnitDied{ 1 });
-
+	simulator.Run();
 	return 0;
 }

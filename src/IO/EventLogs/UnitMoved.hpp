@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdint>
 #include <string>
 
@@ -6,6 +7,7 @@ namespace sw::io
 	struct UnitMoved {
 		constexpr static const char* Name = "UNIT_MOVED";
 
+		uint32_t Tick {};
 		uint32_t unitId {};
 		uint32_t x {};
 		uint32_t y {};

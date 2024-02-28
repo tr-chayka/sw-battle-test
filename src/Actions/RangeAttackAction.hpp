@@ -20,7 +20,7 @@ namespace Sim
 
             if (pTarget)
             {
-                pTarget->GetDamage(pActor->GetAgility());
+                pTarget->GetDamage(pActor->GetAgility(), pActor->GetId());
             }
 
             return pTarget != nullptr;

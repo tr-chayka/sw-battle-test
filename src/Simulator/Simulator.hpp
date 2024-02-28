@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Simulator/Commad.hpp>
+#include <Simulator/Commands/BaseCommad.hpp>
 
 namespace Sim
 {
