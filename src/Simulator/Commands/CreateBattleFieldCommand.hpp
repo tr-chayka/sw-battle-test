@@ -15,7 +15,7 @@ namespace sw::sim
 		virtual bool execute(std::unique_ptr<BattleField>& pBattleField)
 		{
             EventLog::getLogger().log(io::MapCreated{
-				sw::EventLog::getLogger().tick(), 
+				EventLog::getLogger().tick(), 
 				width, height
 			});
 			

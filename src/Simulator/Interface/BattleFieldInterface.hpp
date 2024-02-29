@@ -7,7 +7,7 @@ namespace sw::sim
     class IBattleField
     {
     public:
-        virtual bool isFree(const Point& postion) const = 0;
+        virtual bool isFree(const Point& position) const = 0;
         virtual bool isValidCoords(const Point& position) const = 0;
 
         virtual ICanBaseAction* getItemByCoords(const Point& position) = 0;

@@ -31,7 +31,7 @@ namespace sw::sim
             {
                 unitHp -= damage;
                 EventLog::getLogger().log(io::UnitAttacked{
-                    sw::EventLog::getLogger().tick(), 
+                    EventLog::getLogger().tick(), 
                     unitId, from, damage, unitHp
                 });
             }
@@ -40,7 +40,7 @@ namespace sw::sim
                 unitHp = 0;
 
                 EventLog::getLogger().log(io::UnitAttacked{
-                    sw::EventLog::getLogger().tick(),
+                    EventLog::getLogger().tick(),
                     unitId, from, unitHp, 0
                 });
 
